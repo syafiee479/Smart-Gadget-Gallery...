@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Gadget Gallery</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- jQuery & jQuery Mobile -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+  <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+  <!-- 💕 Ubah kelajuan transition -->
+  <script>
+    $(document).on("mobileinit", function() {
+      $.mobile.defaultPageTransition = "slideup"; // animasi naik ke atas (nampak macam tukar page)
+    });
+  </script>
+
+  <style>
+    body { background-color: #fff0f5; font-family: 'Poppins', sans-serif; }
+    
+    /* PERUBAHAN DI SINI:
+       object-fit: cover; 
+       telah ditukar kepada 
+       object-fit: contain; 
+       untuk memastikan seluruh gambar MUAT di dalam kotak.
+    */
+    .product-card img { 
+        height: 180px; 
+        object-fit: contain; /* <-- Perubahan penting di sini */
+        width: 100%; 
+        border-radius: 15px; 
+        padding: 10px; /* Tambahan sedikit padding agar gambar tidak terlalu rapat dengan tepi */
+    }
+    
+    .product-card {
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(255, 128, 191, 0.3);
+      transition: transform 0.2s ease-in-out;
+    }
+    .product-card:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+
+<!-- PAGE 1: GALLERY -->
+<div data-role="page" id="gallery" style="background-color: #fff0f5;">
+  <div data-role="header" class="text-white text-center" style="background-color: #ff80bf;">
+    <h3>Smart Gadget Gallery</h3>
+  </div>
+
+  <div data-role="content" class="container mt-4">
+    <div class="row" id="product-list"></div>
+
+    <!-- Butang ke About Page -->
+    <div class="text-center mt-5">
+      <a href="#about" data-transition="slideup" class="btn btn-light" style="color:#ff4da6; font-weight:bold;">
+        About / Contact
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: ABOUT -->
+<div data-role="page" id="about" style="background-color: #ffe6f2;">
+  <div data-role="header" class="text-white text-center" style="background-color: #ff80bf;">
+    <h3>About This App</h3>
+  </div>
+
+  <div data-role="content" class="container mt-4 text-center">
+    <p style="color:#4d004d;">
+      The Smart Gadget Gallery is a simple web application designed to display various electronic gadgets.
+	  This project demonstrates how HTML, CSS, JavaScript, and Bootstrap can be combined to create an interactive and responsive user experience.
+    </p>
+
+    <h5 style="color:#4d004d; margin-top:20px;">Developer Info</h5>
+    <ul style="color:#4d004d; list-style-type:none; padding:0;">
+      <li><strong>Name:</strong> Alia Maisara</li>
+      <li><strong>Student ID:</strong> 13DIT24F1015</li>
+      <li><strong>Course:</strong> Web Design Technology</li>
+    </ul>
+
+    <!-- 🔻 Butang balik Gallery (slide ke bawah supaya nampak jelas tukar page) -->
+    <div class="text-center mt-5 mb-5">
+      <a href="#gallery" data-transition="slidedown" class="btn btn-light" style="color:#ff4da6; font-weight:bold;">
+        Back to Gallery
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#ffb3d9;">
+        <h5 id="modalTitle" class="modal-title" style="color:#4d004d;"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center" style="background-color:#fff0f5;">
+        <img id="modalImage" src="" class="img-fluid rounded mb-3" alt="">
+        <p id="modalDescription" style="color:#4d004d;"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// 🛍️ Product List
+const products = [
+  { name: "Smart Watch", image: "images/watch.jpeg", desc: "Stay connected and fit every day with this stylish smartwatch.", price: "RM 300" },
+  { name: "Wireless Earbuds", image: "images/earbuds.jpeg", desc: "Immerse yourself in crystal-clear sound and noise-free comfort.", price: "RM 50" },
+  { name: "Smartphone", image: "images/phone.jpeg", desc: "Experience power and elegance with a sleek design and fast performance.", price: "RM 3500" },
+  { name: "Tablet Pro", image: "images/tablet.jpeg", desc: "Work, play, and create anywhere. Lightweight and fast for productivity.", price: "RM 2000" }
+];
+
+// 🎨 Generate Product Cards
+const container = document.getElementById("product-list");
+products.forEach((p, i) => {
+  container.innerHTML += `
+  <div class="col-md-3 col-6 mb-4">
+    <div class="card product-card shadow-sm" onclick="showProduct(${i})" data-bs-toggle="modal" data-bs-target="#productModal">
+      <img src="${p.image}" class="card-img-top" alt="${p.name}">
+      <div class="card-body text-center">
+        <h6>${p.name}</h6>
+        <p style="color:#ff4da6; font-weight:bold; margin:0;">${p.price}</p>
+      </div>
+    </div>
+  </div>`;
+});
+
+// 💬 Show Product in Modal
+function showProduct(index) {
+  const p = products[index];
+  document.getElementById("modalTitle").innerText = p.name;
+  document.getElementById("modalImage").src = p.image;
+  document.getElementById("modalDescription").innerHTML = `
+    <p>${p.desc}</p>
+    <p style="color:#ff4da6; font-weight:bold;">Price: ${p.price}</p>
+  `;
+}
+</script>
+</body>
+</html>
